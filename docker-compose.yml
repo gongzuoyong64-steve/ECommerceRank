@@ -1,0 +1,41 @@
+services:
+  redis:
+    image: redis
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  ecommerce-ranking:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-ranking-app
+    ports:
+      - "8080:80"
+    environment:
+      - ConnectionStrings__Redis=redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  ecommerce-network:
+    driver: bridge

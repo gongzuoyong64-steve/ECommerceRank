@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電商排行榜系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .ranking-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .ranking-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .ranking-list {
+            list-style: none;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .ranking-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .ranking-item.rank-1 {
+            border-left-color: #ffd700;
+            background: linear-gradient(90deg, #fff9e6 0%, #f8f9fa 100%);
+        }
+
+        .ranking-item.rank-2 {
+            border-left-color: #c0c0c0;
+            background: linear-gradient(90deg, #f5f5f5 0%, #f8f9fa 100%);
+        }
+
+        .ranking-item.rank-3 {
+            border-left-color: #cd7f32;
+            background: linear-gradient(90deg, #faf5f0 0%, #f8f9fa 100%);
+        }
+
+        .rank-badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .product-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .product-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-score {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .buy-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .buy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .buy-button:active {
+            transform: translateY(0);
+        }
+
+        .buy-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .refresh-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .upload-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e7f3ff;
+            border-color: #667eea;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 15px;
+        }
+
+        .upload-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .upload-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e7f3ff;
+            border-radius: 8px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading .ranking-item {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 電商排行榜</h1>
+            <p>點擊購買按鈕增加商品分數</p>
+        </div>
+
+        <!-- CSV 上傳區域 -->
+        <div class="upload-section">
+            <h2 class="upload-title">📤 上傳 CSV 檔案</h2>
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('csv-file-input').click()">
+                <p style="font-size: 1.2em; margin-bottom: 10px;">📁 點擊或拖放 CSV 檔案到此處</p>
+                <p style="color: #666; font-size: 0.9em;">支援格式: .csv</p>
+                <input type="file" id="csv-file-input" class="file-input" accept=".csv" onchange="handleFileSelect(event)">
+            </div>
+            <div id="file-info" style="display: none;"></div>
+            <div style="text-align: center;">
+                <button class="upload-button" id="upload-button" onclick="uploadCSV()" disabled>
+                    上傳 CSV
+                </button>
+                <button class="refresh-button" onclick="loadRanking()" style="margin-left: 10px;">
+                    🔄 重新整理排行榜
+                </button>
+            </div>
+        </div>
+
+        <div class="ranking-card">
+            <div id="error-message"></div>
+            <h2 class="ranking-title">📊 即時排行榜</h2>
+            <div id="ranking-container">
+                <div class="loading">載入中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        let selectedFile = null;
+
+        // 處理文件選擇
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                displayFileInfo(file);
+                document.getElementById('upload-button').disabled = false;
+            }
+        }
+
+        // 顯示文件資訊
+        function displayFileInfo(file) {
+            const fileInfo = document.getElementById('file-info');
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <div class="file-info">
+                    <strong>已選擇檔案:</strong> ${file.name}<br>
+                    <strong>檔案大小:</strong> ${(file.size / 1024).toFixed(2)} KB
+                </div>
+            `;
+        }
+
+        // 上傳 CSV 檔案
+        async function uploadCSV() {
+            if (!selectedFile) {
+                alert('請先選擇 CSV 檔案');
+                return;
+            }
+
+            const uploadButton = document.getElementById('upload-button');
+            const errorDiv = document.getElementById('error-message');
+            const fileInfo = document.getElementById('file-info');
+            
+            errorDiv.innerHTML = '';
+            uploadButton.disabled = true;
+            uploadButton.textContent = '上傳中...';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const response = await fetch(`${API_BASE_URL}/api/csv`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // 顯示成功訊息
+                fileInfo.innerHTML = `
+                    <div class="file-info success">
+                        ✅ ${result.message || 'CSV 檔案上傳成功！'}
+                    </div>
+                `;
+
+                // 清空選擇的檔案
+                document.getElementById('csv-file-input').value = '';
+                selectedFile = null;
+                uploadButton.disabled = true;
+                uploadButton.textContent = '上傳 CSV';
+
+                // 重新載入排行榜
+                await loadRanking();
+            } catch (error) {
+                console.error('Error uploading CSV:', error);
+                errorDiv.innerHTML = `<div class="error">❌ 上傳失敗: ${error.message}</div>`;
+                fileInfo.innerHTML = `
+                    <div class="file-info" style="background: #fee; color: #c33;">
+                        ❌ 上傳失敗: ${error.message}
+                    </div>
+                `;
+                uploadButton.disabled = false;
+                uploadButton.textContent = '上傳 CSV';
+            }
+        }
+
+        // 載入排行榜
+        async function loadRanking() {
+            const container = document.getElementById('ranking-container');
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = '';
+
+            try {
+                container.innerHTML = '<div class="loading">載入中...</div>';
+                
+                const response = await fetch(`${API_BASE_URL}/api/ranking?startRank=0&endRank=9&order=desc`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const ranking = await response.json();
+                
+                if (ranking.length === 0) {
+                    container.innerHTML = '<div class="loading">目前沒有排行榜資料</div>';
+                    return;
+                }
+
+                renderRanking(ranking);
+            } catch (error) {
+                console.error('Error loading ranking:', error);
+                errorDiv.innerHTML = `<div class="error">❌ 載入失敗: ${error.message}</div>`;
+                container.innerHTML = '';
+            }
+        }
+
+        // 渲染排行榜
+        function renderRanking(ranking) {
+            const container = document.getElementById('ranking-container');
+            
+            const html = `
+                <ul class="ranking-list">
+                    ${ranking.map((item, index) => `
+                        <li class="ranking-item rank-${item.rank}">
+                            <div class="rank-badge">#${item.rank}</div>
+                            <div class="product-info">
+                                <div class="product-name">${item.productId}</div>
+                                <div class="product-score">分數: ${item.score.toFixed(1)}</div>
+                            </div>
+                            <button class="buy-button" onclick="buyProduct('${item.productId}')">
+                                購買 (+1)
+                            </button>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // 購買商品
+        async function buyProduct(productId) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/ranking/products/${productId}/score`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ score: 1 })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Purchase successful:', result);
+
+                // 重新載入排行榜
+                await loadRanking();
+            } catch (error) {
+                console.error('Error purchasing product:', error);
+                errorDiv.innerHTML = `<div class="error">❌ 購買失敗: ${error.message}</div>`;
+            }
+        }
+
+        // 頁面載入時自動載入排行榜
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRanking();
+            
+            // 每 5 秒自動刷新排行榜
+            setInterval(loadRanking, 5000);
+
+            // 初始化拖放功能
+            const uploadArea = document.getElementById('upload-area');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.name.endsWith('.csv')) {
+                        selectedFile = file;
+                        // 創建一個新的 FileList
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        document.getElementById('csv-file-input').files = dataTransfer.files;
+                        displayFileInfo(file);
+                        document.getElementById('upload-button').disabled = false;
+                    } else {
+                        alert('請選擇 CSV 檔案');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
