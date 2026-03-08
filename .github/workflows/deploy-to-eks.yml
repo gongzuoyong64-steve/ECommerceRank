@@ -69,14 +69,9 @@ jobs:
           aws eks update-kubeconfig \
             --name ${{ env.EKS_CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }} \
-            --role-arn arn:aws:iam::763835215122:role/GitHubActionsRole
-
 
       - name: Verify EKS access
-        run: |
-          kubectl config current-context
-          kubectl auth can-i get pods --all-namespaces
-          kubectl get nodes
+        run: kubectl get nodes
 
       - name: Update deployment image
         run: |
