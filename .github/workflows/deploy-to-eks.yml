@@ -17,8 +17,8 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     permissions:
-      id-token: write      # 允許 OIDC
-      contents: read       # 允許讀 repo
+      id-token: write      # 必須允許 OIDC
+      contents: read       # 讀取 repo
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,23 +61,17 @@ jobs:
           role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Check AWS CLI version
-        run: aws --version
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig \
-            --name ${{ env.EKS_CLUSTER_NAME }} \
-            --region ${{ env.AWS_REGION }} \
-            --alias eks-ecommerceRanking
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
-      - name: Verify kubeconfig context
+      - name: Verify EKS access
         run: |
           kubectl config current-context
           kubectl auth can-i get pods --all-namespaces
-
-      - name: Verify cluster access
-        run: kubectl get nodes
+          kubectl get nodes
 
       - name: Update deployment image
         run: |
