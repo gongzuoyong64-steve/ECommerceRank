@@ -72,8 +72,8 @@ jobs:
 
       - name: Verify EKS access
         run: |
-          aws sts get-caller-identity
-          kubectl get nodes || (echo "kubectl cannot access cluster. Check aws-auth ConfigMap for the IAM Role." && exit 1)
+          aws eks get-token --cluster-name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+          kubectl get nodes
 
       - name: Update deployment image
         run: |
