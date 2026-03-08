@@ -68,7 +68,8 @@ jobs:
         run: |
           aws eks update-kubeconfig \
             --name ${{ env.EKS_CLUSTER_NAME }} \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ env.AWS_REGION }} \
+            --role-arn arn:aws:iam::763835215122:role/EKSAccessRole
 
       - name: Test kubectl connectivity
         run: |
