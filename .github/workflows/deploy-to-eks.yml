@@ -68,6 +68,11 @@ jobs:
         run: |
           aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
+      - name: Test kubectl connectivity
+        run: |
+          kubectl config view
+          kubectl get nodes
+
       - name: Update deployment image
         run: |
           sed -i "s|ecommerce-ranking/ecommerce-ranking:latest|${{ env.IMAGE_URI }}|g" k8s/deployment.yaml
