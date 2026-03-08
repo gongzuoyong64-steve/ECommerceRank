@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ecommerce-ranking
-        image: YOUR_ECR_REPO/ecommerce-ranking:latest
+        image: ecommerce-ranking/ecommerce-ranking:latest
         ports:
         - containerPort: 80
         env:

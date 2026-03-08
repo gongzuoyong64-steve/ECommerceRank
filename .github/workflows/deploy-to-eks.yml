@@ -70,7 +70,7 @@ jobs:
 
       - name: Update deployment image
         run: |
-          sed -i "s|YOUR_ECR_REPO/ecommerce-ranking:latest|${{ env.IMAGE_URI }}|g" k8s/deployment.yaml
+          sed -i "s|ecommerce-ranking/ecommerce-ranking:latest|${{ env.IMAGE_URI }}|g" k8s/deployment.yaml
 
       - name: Deploy to EKS
         run: |
