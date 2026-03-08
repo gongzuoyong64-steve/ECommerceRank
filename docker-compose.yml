@@ -22,9 +22,10 @@ services:
       dockerfile: Dockerfile
     container_name: ecommerce-ranking-app
     ports:
-      - "8080:80"
+      - "5000:5000"
     environment:
       - ConnectionStrings__Redis=redis:6379
+      - DOTNET_URLS=http://0.0.0.0:5000
     depends_on:
       redis:
         condition: service_healthy
