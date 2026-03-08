@@ -69,6 +69,9 @@ jobs:
           aws eks update-kubeconfig \
             --name ${{ env.EKS_CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }} 
+      - name: Debug kubeconfig
+        run: |
+          cat ~/.kube/config
 
       - name: Verify EKS access
         run: |
