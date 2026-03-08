@@ -26,7 +26,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::763835215122:role/github
+          role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -58,7 +58,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::763835215122:role/github
+          role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install kubectl
@@ -69,7 +69,7 @@ jobs:
           aws eks update-kubeconfig \
             --name ${{ env.EKS_CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }} \
-            --role-arn arn:aws:iam::763835215122:role/github
+            --role-arn arn:aws:iam::763835215122:role/GitHubActionsRole
 
       - name: Test kubectl connectivity
         run: |
