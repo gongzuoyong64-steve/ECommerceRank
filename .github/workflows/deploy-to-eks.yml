@@ -72,7 +72,7 @@ jobs:
 
       - name: Test kubectl connectivity
         run: |
-          kubectl config view
+          aws sts get-caller-identity
           kubectl get nodes
 
       - name: Update deployment image
