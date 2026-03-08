@@ -1,5 +1,4 @@
 name: Build and Deploy to EKS
-
 on:
   push:
     branches:
@@ -14,14 +13,12 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     permissions:
-      id-token: write      # 必須允許 OIDC
-      contents: read       # 讀取 repo
+      id-token: write
+      contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -29,11 +26,10 @@ jobs:
           role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
+      - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_NAME: ${{ env.ECR_REPOSITORY }}
@@ -45,15 +41,13 @@ jobs:
           echo "IMAGE_URI=$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG" >> $GITHUB_ENV
 
   deploy-to-eks:
-    name: Deploy to EKS
     needs: build-and-push
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -61,21 +55,16 @@ jobs:
           role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Verify AWS identity
-        run: aws sts get-caller-identity
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig \
+              --name ${{ env.EKS_CLUSTER_NAME }} \
+              --region ${{ env.AWS_REGION }}
 
-      - name: Update kubeconfig for EKS
-        run: |
-          aws eks update-kubeconfig \
-            --name ${{ env.EKS_CLUSTER_NAME }} \
-            --region ${{ env.AWS_REGION }} \
-
-      - name: Verify EKS access
+      - name: Verify access
         run: kubectl get nodes
 
       - name: Update deployment image
-        run: |
-          sed -i "s|ecommerce-ranking/ecommerce-ranking:latest|${{ env.IMAGE_URI }}|g" k8s/deployment.yaml
+        run: sed -i "s|ecommerce-ranking/ecommerce-ranking:latest|${{ env.IMAGE_URI }}|g" k8s/deployment.yaml
 
       - name: Deploy to EKS
         run: |
