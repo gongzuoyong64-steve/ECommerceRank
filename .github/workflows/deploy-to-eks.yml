@@ -17,8 +17,8 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     permissions:
-      id-token: write      
-      contents: read       
+      id-token: write      # 允許 OIDC
+      contents: read       # 允許讀 repo
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::763835215122:role/GitHubActionsRole
@@ -65,15 +65,19 @@ jobs:
         run: aws --version
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
-
-      - name: Debug EKS token
-        run: aws eks get-token --cluster-name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
-
-      - name: Verify EKS access
         run: |
-          aws eks get-token --cluster-name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
-          kubectl get nodes
+          aws eks update-kubeconfig \
+            --name ${{ env.EKS_CLUSTER_NAME }} \
+            --region ${{ env.AWS_REGION }} \
+            --alias eks-ecommerceRanking
+
+      - name: Verify kubeconfig context
+        run: |
+          kubectl config current-context
+          kubectl auth can-i get pods --all-namespaces
+
+      - name: Verify cluster access
+        run: kubectl get nodes
 
       - name: Update deployment image
         run: |
