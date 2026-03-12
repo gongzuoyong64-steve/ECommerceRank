@@ -1,3 +1,21 @@
+# ----------------------------------------
+# Redis Service
+# ----------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  type: ClusterIP
+---
+# ----------------------------------------
+# Ecommerce-Ranking Service
+# ----------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,6 +25,6 @@ spec:
     app: ecommerce-ranking
   ports:
     - protocol: TCP
-      port: 80 # 對外訪問的端口
-      targetPort: 8080 # 映射到 Pod 容器的端口
+      port: 80       # 對外訪問端口
+      targetPort: 8080  # Pod 容器端口
   type: LoadBalancer
