@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ecommerce-ranking
-          image: 763835215122.dkr.ecr.ap-northeast-1.amazonaws.com/eks-ecommerce:<IMAGE_TAG>
+          image: 763835215122.dkr.ecr.ap-northeast-1.amazonaws.com/eks-ecommerce:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
