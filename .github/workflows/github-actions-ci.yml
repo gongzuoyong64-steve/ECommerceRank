@@ -38,11 +38,6 @@ jobs:
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-    - name: Update Kubernetes deployment
-      run: |
-        kubectl set image deployment/ecommerce-ranking \
-        ecommerce-ranking=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-
     - name: Update kube config
       run: aws eks update-kubeconfig --name eks-ecommerceRanking
     
