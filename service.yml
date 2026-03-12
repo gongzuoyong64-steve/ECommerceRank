@@ -7,6 +7,6 @@ spec:
     app: ecommerce-ranking
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5000
+      port: 80 # 對外訪問的端口
+      targetPort: 8080 # 映射到 Pod 容器的端口
   type: LoadBalancer
