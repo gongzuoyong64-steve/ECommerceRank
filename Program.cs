@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // 配置 Redis
-var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "redis:6379";
 Console.WriteLine($"Redis connection: {redisConnectionString}");
 var redis = ConnectionMultiplexer.Connect(redisConnectionString);
 
