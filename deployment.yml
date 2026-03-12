@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-ranking
+  labels:
+    app: ecommerce-ranking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-ranking
+  template:
+    metadata:
+      labels:
+        app: ecommerce-ranking
+    spec:
+      containers:
+        - name: ecommerce-ranking
+          image: 763835215122.dkr.ecr.ap-northeast-1.amazonaws.com/eks-ecommerce:1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
