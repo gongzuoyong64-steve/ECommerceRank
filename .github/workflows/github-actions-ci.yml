@@ -16,7 +16,6 @@ jobs:
       uses: azure/setup-kubectl@v2.0
       with:
         version: 'v1.24.0'
-      id: install
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -34,21 +33,22 @@ jobs:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: eks-ecommerce
         IMAGE_TAG: ${{ github.sha }}
-
-      steps:
-        - name: Build, tag, and push docker image to Amazon ECR
-          run: |
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-        - name: Update Kubernetes deployment
-          run: |
-            kubectl set image deployment/ecommerce-ranking \
-            ecommerce-ranking=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
     - name: Update kube config
       run: aws eks update-kubeconfig --name eks-ecommerceRanking
-    
+
+    - name: Update Kubernetes deployment
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: eks-ecommerce
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        kubectl set image deployment/ecommerce-ranking \
+        ecommerce-ranking=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+
     - name: Deploy to EKS
       run: |
         kubectl apply -f deployment.yml
