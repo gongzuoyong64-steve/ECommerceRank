@@ -1,93 +1,98 @@
-# 电商排行榜系统 (E-Commerce Ranking System)
+# 電商排行榜系統 (E-Commerce Ranking System)
 
-使用 C# + Redis 构建的电商排行榜系统，支持通过 Kubernetes 部署到 EKS。
+使用 C# + Redis 建構的電商排行榜系統，支援透過 Kubernetes 部署至 EKS。
 
-## 功能特性
+## 功能特色
 
-- ✅ **前端界面** - 美观的排行榜展示页面
-- ✅ **CSV 檔案上傳** - 支援上傳 CSV 檔案批量更新排行榜數據
-- ✅ 商品分数增加（模拟购买、点击等行为）
-- ✅ 排行榜查询（支持正序/倒序）
-- ✅ 商品排名查询
-- ✅ 商品分数查询
-- ✅ 排行榜清空
-- ✅ 实时排行榜更新（每 5 秒自动刷新）
+* ✅ **CSV 檔案上傳** - 支援上傳 CSV 檔案批量更新排行榜資料
+* ✅ 商品分數增加（模擬購買、點擊等行為）
+* ✅ 排行榜查詢（支援正序／倒序）
+* ✅ 商品排名查詢
+* ✅ 商品分數查詢
+* ✅ 排行榜清空
+* ✅ 即時排行榜更新（每 5 秒自動重新整理）
 
-## 项目结构
+## 專案結構
 
-```
+```text
 .
 ├── Controllers/
 │   └── RankingController.cs      # API 控制器
 ├── Services/
-│   ├── IRedisService.cs          # Redis 服务接口
-│   └── RedisService.cs           # Redis 服务实现（TODO: 需要完成）
+│   ├── IRedisService.cs          # Redis 服務介面
+│   └── RedisService.cs           # Redis 服務實作（TODO: 需要完成）
 ├── wwwroot/
-│   └── index.html                # 前端页面（排行榜界面）
-├── Program.cs                     # 应用程序入口
-├── appsettings.json              # 配置文件
-├── Dockerfile                    # Docker 镜像构建文件
-├── docker-compose.yml            # Docker Compose 配置（Redis）
+│   └── index.html                # 前端頁面（排行榜介面）
+├── Program.cs                     # 應用程式入口
+├── appsettings.json              # 設定檔
+├── Dockerfile                    # Docker 映像檔建構設定
+├── docker-compose.yml            # Docker Compose 設定（Redis）
 ├── k8s/
-│   ├── deployment.yaml           # Kubernetes 部署配置
-│   └── redis-deployment.yaml     # Redis 部署配置
+│   ├── deployment.yaml           # Kubernetes 部署設定
+│   └── redis-deployment.yaml     # Redis 部署設定
 └── .github/workflows/
-    └── deploy-to-eks.yml         # GitHub Actions CI/CD 配置
+    └── deploy-to-eks.yml         # GitHub Actions CI/CD 設定
 ```
 
-## 练习任务 (TODO)
+## 練習任務 (TODO)
 
-### 1. RedisService 实现
+### 1. RedisService 實作
 
 在 `Services/RedisService.cs` 中完成以下方法：
 
-- [ ] `IncrementProductScoreAsync` - 增加商品分数
-- [ ] `GetRankingAsync` - 获取排行榜
-- [ ] `GetProductRankAsync` - 获取商品排名
-- [ ] `GetProductScoreAsync` - 获取商品分数
-- [ ] `ClearRankingAsync` - 清空排行榜
+* [ ] `IncrementProductScoreAsync` - 增加商品分數
+* [ ] `GetRankingAsync` - 取得排行榜
+* [ ] `GetProductRankAsync` - 取得商品排名
+* [ ] `GetProductScoreAsync` - 取得商品分數
+* [ ] `ClearRankingAsync` - 清空排行榜
 
-每个方法都有详细的 TODO 注释和提示。
+每個方法都有詳細的 TODO 註解與提示。
 
-### 2. Program.cs Redis 配置
+### 2. Program.cs Redis 設定
 
-虽然已经提供了基础实现，但你可以尝试：
-- [ ] 添加 Redis 连接重试机制
-- [ ] 添加连接池配置
-- [ ] 添加健康检查
+雖然已提供基礎實作，但你可以嘗試：
 
-## 本地开发
+* [ ] 新增 Redis 連線重試機制
+* [ ] 新增連線池設定
+* [ ] 新增健康檢查
 
-### 前置要求
+## 本機開發
 
-- .NET 8.0 SDK
-- Docker 和 Docker Compose（用于启动 Redis）
+### 前置需求
 
-### 运行步骤
+* .NET 8.0 SDK
+* Docker 和 Docker Compose（用於啟動 Redis）
 
-#### 方式一：使用 Docker Compose 启动 Redis（推荐）
+### 執行步驟
 
-1. 启动 Redis:
+#### 方式一：使用 Docker Compose 啟動 Redis（推薦）
+
+1. 啟動 Redis：
+
 ```bash
 docker-compose up -d redis
 ```
 
-2. 运行应用:
+2. 執行應用程式：
+
 ```bash
 dotnet restore
 dotnet run
 ```
 
-3. 访问前端页面:
-```
+3. 存取前端頁面：
+
+```text
 https://localhost:5001
 ```
-或访问 Swagger UI:
-```
+
+或存取 Swagger UI：
+
+```text
 https://localhost:5001/swagger
 ```
 
-#### 方式二：使用 Docker 命令启动 Redis
+#### 方式二：使用 Docker 指令啟動 Redis
 
 ```bash
 docker run -d -p 6379:6379 --name redis redis:7-alpine
@@ -99,47 +104,48 @@ docker run -d -p 6379:6379 --name redis redis:7-alpine
 # 如果使用 docker-compose
 docker-compose down
 
-# 如果使用 docker 命令
+# 如果使用 docker 指令
 docker stop redis && docker rm redis
 ```
 
-#### 验证 Redis 连接
+#### 驗證 Redis 連線
 
 ```bash
-# 检查 Redis 容器状态
+# 檢查 Redis 容器狀態
 docker-compose ps
 
-# 测试 Redis 连接
+# 測試 Redis 連線
 docker-compose exec redis redis-cli ping
-# 应该返回: PONG
+# 應該返回：PONG
 
-# 或者使用本地 redis-cli（如果已安装）
+# 或使用本機 redis-cli（如果已安裝）
 redis-cli -h localhost -p 6379 ping
 ```
 
-## 前端界面
+## 前端介面
 
-项目包含一个美观的前端排行榜界面，支持：
+專案包含一個美觀的前端排行榜介面，支援：
 
-- 📊 **实时排行榜展示** - 显示商品排名、名称和分数
-- 📤 **CSV 檔案上傳** - 支援點擊或拖放上傳 CSV 檔案
-- 🛒 **购买功能** - 点击购买按钮增加商品分数
-- 🔄 **自动刷新** - 每 5 秒自动更新排行榜
-- 🎨 **响应式设计** - 适配不同屏幕尺寸
-- 🏆 **排名高亮** - 前三名有特殊样式标识
+* 📊 **即時排行榜展示** - 顯示商品排名、名稱與分數
+* 📤 **CSV 檔案上傳** - 支援點擊或拖放上傳 CSV 檔案
+* 🛒 **購買功能** - 點擊購買按鈕增加商品分數
+* 🔄 **自動重新整理** - 每 5 秒自動更新排行榜
+* 🎨 **響應式設計** - 適配不同螢幕尺寸
+* 🏆 **排名高亮** - 前三名具有特殊樣式標示
 
-访问 `https://localhost:5001` 即可使用前端界面。
+存取 `https://localhost:5001` 即可使用前端介面。
 
 ### CSV 上傳功能
 
-- 點擊上傳區域選擇 CSV 檔案
-- 或直接拖放 CSV 檔案到上傳區域
-- 上傳成功後自動刷新排行榜
-- 支援檔案格式驗證和錯誤提示
+* 點擊上傳區域選擇 CSV 檔案
+* 或直接拖放 CSV 檔案至上傳區域
+* 上傳成功後自動重新整理排行榜
+* 支援檔案格式驗證與錯誤提示
 
-## API 端点
+## API 端點
 
-### 增加商品分数
+### 增加商品分數
+
 ```http
 POST /api/ranking/products/{productId}/score
 Content-Type: application/json
@@ -149,27 +155,32 @@ Content-Type: application/json
 }
 ```
 
-### 获取排行榜
+### 取得排行榜
+
 ```http
 GET /api/ranking?startRank=0&endRank=9&order=desc
 ```
 
-### 获取商品排名
+### 取得商品排名
+
 ```http
 GET /api/ranking/products/{productId}/rank?order=desc
 ```
 
-### 获取商品分数
+### 取得商品分數
+
 ```http
 GET /api/ranking/products/{productId}/score
 ```
 
 ### 清空排行榜
+
 ```http
 DELETE /api/ranking
 ```
 
 ### 上傳 CSV 檔案
+
 ```http
 POST /api/csv
 Content-Type: multipart/form-data
@@ -177,7 +188,7 @@ Content-Type: multipart/form-data
 file: [CSV 檔案]
 ```
 
-## Docker 构建
+## Docker 建構
 
 ```bash
 docker build -t ecommerce-ranking:latest .
@@ -186,25 +197,28 @@ docker run -p 8080:80 -e ConnectionStrings__Redis=host.docker.internal:6379 ecom
 
 ## Kubernetes 部署
 
-### 前置要求
+### 前置需求
 
-- kubectl 已配置
-- EKS 集群已创建
-- AWS CLI 已配置
+* 已設定 kubectl
+* 已建立 EKS 叢集
+* 已設定 AWS CLI
 
-### 部署步骤
+### 部署步驟
 
-1. 部署 Redis:
+1. 部署 Redis：
+
 ```bash
 kubectl apply -f k8s/redis-deployment.yaml
 ```
 
-2. 部署应用:
+2. 部署應用程式：
+
 ```bash
 kubectl apply -f k8s/deployment.yaml
 ```
 
-3. 检查部署状态:
+3. 檢查部署狀態：
+
 ```bash
 kubectl get pods
 kubectl get services
@@ -212,53 +226,55 @@ kubectl get services
 
 ## GitHub Actions CI/CD
 
-### 配置 Secrets
+### 設定 Secrets
 
-在 GitHub 仓库设置中添加以下 Secrets:
+在 GitHub Repository 的設定中新增以下 Secrets：
 
-- `AWS_ACCESS_KEY_ID` - AWS 访问密钥 ID
-- `AWS_SECRET_ACCESS_KEY` - AWS 密钥
+* `AWS_ACCESS_KEY_ID` - AWS 存取金鑰 ID
+* `AWS_SECRET_ACCESS_KEY` - AWS 秘密存取金鑰
 
-### 配置 ECR 和 EKS
+### 設定 ECR 與 EKS
 
-1. 在 `deploy-to-eks.yml` 中更新:
-   - `AWS_REGION` - AWS 区域
-   - `ECR_REPOSITORY` - ECR 仓库名称
-   - `EKS_CLUSTER_NAME` - EKS 集群名称
+1. 在 `deploy-to-eks.yml` 中更新：
 
-2. 在 `k8s/deployment.yaml` 中更新镜像地址为你的 ECR 地址
+   * `AWS_REGION` - AWS 區域
+   * `ECR_REPOSITORY` - ECR 儲存庫名稱
+   * `EKS_CLUSTER_NAME` - EKS 叢集名稱
+
+2. 在 `k8s/deployment.yaml` 中更新映像檔地址為你的 ECR 地址。
 
 ### 工作流程
 
-当代码推送到 `main` 分支时，GitHub Actions 会：
-1. 构建 Docker 镜像
-2. 推送到 Amazon ECR
-3. 部署到 EKS 集群
+當程式碼推送至 `main` 分支時，GitHub Actions 會：
 
-## 测试示例
+1. 建構 Docker 映像檔
+2. 推送至 Amazon ECR
+3. 部署至 EKS 叢集
+
+## 測試範例
 
 ```bash
-# 增加商品分数
+# 增加商品分數
 curl -X POST "https://localhost:5001/api/ranking/products/product-001/score" \
   -H "Content-Type: application/json" \
   -d '{"score": 100}'
 
-# 获取排行榜
+# 取得排行榜
 curl "https://localhost:5001/api/ranking?startRank=0&endRank=9"
 
-# 获取商品排名
+# 取得商品排名
 curl "https://localhost:5001/api/ranking/products/product-001/rank"
 ```
 
-## 技术栈
+## 技術棧
 
-- .NET 8.0
-- StackExchange.Redis
-- Docker
-- Kubernetes
-- AWS EKS
-- GitHub Actions
+* .NET 8.0
+* StackExchange.Redis
+* Docker
+* Kubernetes
+* AWS EKS
+* GitHub Actions
 
-## 许可证
+## 授權條款
 
 MIT
